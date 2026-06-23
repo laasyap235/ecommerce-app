@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { ChevronDown, ShoppingCart, Star } from 'lucide-react';
+import {useNavigate} from 'react-router-dom'
 
 const EcommercePage = () => {
+  const navigate = useNavigate()
   const [selectedCategory, setSelectedCategory] = useState('all');
 
+  
   // Mock product data
   const products = [
     {
@@ -163,6 +166,7 @@ const EcommercePage = () => {
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
+                onClick={() => navigate(`/product/${product.id}`)}
                 className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 transition duration-300 group cursor-pointer"
               >
                 {/* Product Image Container */}

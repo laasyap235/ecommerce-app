@@ -1,11 +1,16 @@
-import { useState } from 'react'
+import React from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import EcommercePage from './Components/EcommerceHome'
-function App() {
+import ProductDetailsPage from './Components/ProductDetails'
 
+function App() {
   return (
-    <>
-    <EcommercePage/>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<EcommercePage />} />
+        <Route path='product/:id' element={<ProductDetailsPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
