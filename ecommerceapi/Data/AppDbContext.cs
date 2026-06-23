@@ -48,14 +48,93 @@ namespace ECommerceApi.Data
 
             // Seed Products
             modelBuilder.Entity<Product>().HasData(
-                new Product { ProductId = 1, Name = "Wireless Headphones", Description = "Premium noise cancelling headphones", Price = 199.99m, ImageUrl = "https://example.com/headphones.jpg", Stock = 50, CategoryId = 1 },
-                new Product { ProductId = 2, Name = "Smart Watch Pro", Description = "Feature packed smartwatch", Price = 299.99m, ImageUrl = "https://example.com/smartwatch.jpg", Stock = 30, CategoryId = 1 },
-                new Product { ProductId = 3, Name = "Cotton T-Shirt", Description = "Comfortable everyday t-shirt", Price = 29.99m, ImageUrl = "https://example.com/tshirt.jpg", Stock = 100, CategoryId = 2 },
-                new Product { ProductId = 4, Name = "Denim Jeans", Description = "Classic slim fit jeans", Price = 69.99m, ImageUrl = "https://example.com/jeans.jpg", Stock = 75, CategoryId = 2 },
-                new Product { ProductId = 5, Name = "Winter Jacket", Description = "Warm jacket for cold weather", Price = 149.99m, ImageUrl = "https://example.com/jacket.jpg", Stock = 40, CategoryId = 2 },
-                new Product { ProductId = 6, Name = "Leather Watch", Description = "Classic leather strap watch", Price = 149.99m, ImageUrl = "https://example.com/watch.jpg", Stock = 25, CategoryId = 3 },
-                new Product { ProductId = 7, Name = "Designer Sunglasses", Description = "UV protected stylish sunglasses", Price = 179.99m, ImageUrl = "https://example.com/sunglasses.jpg", Stock = 60, CategoryId = 3 },
-                new Product { ProductId = 8, Name = "Running Shoes", Description = "Lightweight shoes for running", Price = 89.99m, ImageUrl = "https://example.com/shoes.jpg", Stock = 80, CategoryId = 4 }
+                new Product
+                {
+                    ProductId = 1,
+                    Name = "Wireless Headphones",
+                    Description = "Premium noise cancelling headphones",
+                    Price = 199.99m,
+                    ImageUrl = "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
+                    Stock = 50,
+                    CategoryId = 1
+                },
+
+                new Product
+                {
+                    ProductId = 2,
+                    Name = "Smart Watch Pro",
+                    Description = "Feature packed smartwatch",
+                    Price = 299.99m,
+                    ImageUrl = "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
+                    Stock = 30,
+                    CategoryId = 1
+                },
+
+                new Product
+                {
+                    ProductId = 3,
+                    Name = "Cotton T-Shirt",
+                    Description = "Comfortable everyday t-shirt",
+                    Price = 29.99m,
+                    ImageUrl = "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab",
+                    Stock = 100,
+                    CategoryId = 2
+                },
+
+                new Product
+                {
+                    ProductId = 4,
+                    Name = "Denim Jeans",
+                    Description = "Classic slim fit jeans",
+                    Price = 69.99m,
+                    ImageUrl = "https://images.unsplash.com/photo-1542272604-787c3835535d",
+                    Stock = 75,
+                    CategoryId = 2
+                },
+
+                new Product
+                {
+                    ProductId = 5,
+                    Name = "Winter Jacket",
+                    Description = "Warm jacket for cold weather",
+                    Price = 149.99m,
+                    ImageUrl = "https://images.unsplash.com/photo-1551028719-00167b16eac5",
+                    Stock = 40,
+                    CategoryId = 2
+                },
+
+                new Product
+                {
+                    ProductId = 6,
+                    Name = "Leather Watch",
+                    Description = "Classic leather strap watch",
+                    Price = 149.99m,
+                    ImageUrl = "https://images.unsplash.com/photo-1434056886845-dac89ffe9b56",
+                    Stock = 25,
+                    CategoryId = 3
+                },
+
+                new Product
+                {
+                    ProductId = 7,
+                    Name = "Designer Sunglasses",
+                    Description = "UV protected stylish sunglasses",
+                    Price = 179.99m,
+                    ImageUrl = "https://images.unsplash.com/photo-1511499767150-a48a237f0083",
+                    Stock = 60,
+                    CategoryId = 3
+                },
+
+                new Product
+                {
+                    ProductId = 8,
+                    Name = "Running Shoes",
+                    Description = "Lightweight shoes for running",
+                    Price = 89.99m,
+                    ImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+                    Stock = 80,
+                    CategoryId = 4
+                }
             );
         }
     }

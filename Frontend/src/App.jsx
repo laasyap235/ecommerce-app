@@ -1,17 +1,18 @@
-import React from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import EcommercePage from './Components/EcommerceHome'
-import ProductDetailsPage from './Components/ProductDetails'
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import HomePage from "./pages/HomePage";
+import ProductPage from "./pages/ProductPage";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<EcommercePage />} />
-        <Route path='product/:id' element={<ProductDetailsPage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/product/:id" element={<ProductPage />} />
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;
