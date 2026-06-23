@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Navbar from "../Components/Navbar";
 
 import {
   getProducts,
@@ -42,6 +43,8 @@ const HomePage = () => {
         );
 
   return (
+    <>
+    <Navbar />
     <div className="min-h-screen bg-white">
       <section className="bg-gradient-to-r from-gray-50 to-gray-100 py-12">
         <div className="max-w-7xl mx-auto text-center">
@@ -72,6 +75,7 @@ const HomePage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
