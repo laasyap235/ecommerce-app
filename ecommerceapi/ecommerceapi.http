@@ -1,0 +1,70 @@
+@baseUrl http://localhost:5190
+
+GET {{baseUrl}}/weatherforecast/
+Accept: application/json
+
+###
+### Get all categories
+GET {{baseUrl}}/api/category
+
+### Get category by id
+GET {{baseUrl}}/api/category/1
+
+### Create category
+POST {{baseUrl}}/api/category
+Content-Type: application/json
+
+{
+  "categoryName": "Electronics",
+  "description": "Electronic devices and gadgets"
+}
+
+### Update category
+PUT {{baseUrl}}/api/category/1
+Content-Type: application/json
+
+{
+  "categoryName": "Electronics & Gadgets",
+  "description": "Updated description"
+}
+
+### Delete category
+DELETE {{baseUrl}}/api/category/1
+
+###
+
+### Get all products
+GET {{baseUrl}}/api/product
+
+### Get product by id
+GET {{baseUrl}}/api/product/1
+
+### Get products by category
+GET {{baseUrl}}/api/products/category/1
+
+### Create product
+POST {{baseUrl}}/api/product
+Content-Type: application/json
+
+{
+  "name": "Wireless Headphones",
+  "description": "Premium noise cancelling headphones",
+  "price": 199.99,
+  "imageUrl": "https://example.com/headphones.jpg",
+  "categoryId": 1
+}
+
+### Update product
+PUT {{baseUrl}}/api/product/1
+Content-Type: application/json
+
+{
+  "name": "Wireless Headphones Pro",
+  "description": "Updated premium headphones",
+  "price": 249.99,
+  "imageUrl": "https://example.com/headphones-pro.jpg",
+  "categoryId": 1
+}
+
+### Delete product
+DELETE {{baseUrl}}/api/product/1
