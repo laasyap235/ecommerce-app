@@ -97,8 +97,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "product",
-        "Type": "ECommerceApi.Models.Product",
+        "Name": "dto",
+        "Type": "ECommerceApi.DTOs.CreateProductDto",
         "IsRequired": true
       }
     ],
@@ -134,8 +134,8 @@
         "IsRequired": true
       },
       {
-        "Name": "product",
-        "Type": "ECommerceApi.Models.Product",
+        "Name": "dto",
+        "Type": "ECommerceApi.DTOs.CreateProductDto",
         "IsRequired": true
       }
     ],

@@ -1,5 +1,6 @@
 ﻿using ECommerceApi.Models;
 using ECommerceApi.Data;
+using ECommerceApi.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,66 +17,113 @@ namespace ECommerceApi.Controllers
             _context = context;
         }
 
-        // GET /api/products
+        // GET /api/product
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var products = await _context.Products
                 .Include(p => p.Category)
+                .Select(p => new ProductDto
+                {
+                    ProductId = p.ProductId,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    ImageUrl = p.ImageUrl,
+                    Stock = p.Stock,
+                    CategoryId = p.CategoryId,
+                    CategoryName = p.Category != null ? p.Category.CategoryName : ""
+                })
                 .ToListAsync();
+
             return Ok(products);
         }
 
-        // GET /api/products/{id}
+        // GET /api/product/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var product = await _context.Products
                 .Include(p => p.Category)
-                .FirstOrDefaultAsync(p => p.ProductId == id);
+                .Where(p => p.ProductId == id)
+                .Select(p => new ProductDto
+                {
+                    ProductId = p.ProductId,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    ImageUrl = p.ImageUrl,
+                    Stock = p.Stock,
+                    CategoryId = p.CategoryId,
+                    CategoryName = p.Category != null ? p.Category.CategoryName : ""
+                })
+                .FirstOrDefaultAsync();
+
             if (product == null) return NotFound();
             return Ok(product);
         }
 
-        // GET /api/products/category/{categoryId}
+        // GET /api/product/category/{categoryId}
         [HttpGet("category/{categoryId}")]
         public async Task<IActionResult> GetByCategory(int categoryId)
         {
             var products = await _context.Products
                 .Include(p => p.Category)
                 .Where(p => p.CategoryId == categoryId)
+                .Select(p => new ProductDto
+                {
+                    ProductId = p.ProductId,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    ImageUrl = p.ImageUrl,
+                    Stock = p.Stock,
+                    CategoryId = p.CategoryId,
+                    CategoryName = p.Category != null ? p.Category.CategoryName : ""
+                })
                 .ToListAsync();
+
             return Ok(products);
         }
 
-        // POST /api/products
+        // POST /api/product
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Product product)
+        public async Task<IActionResult> Create([FromBody] CreateProductDto dto)
         {
+            var product = new Product
+            {
+                Name = dto.Name,
+                Description = dto.Description,
+                Price = dto.Price,
+                ImageUrl = dto.ImageUrl,
+                Stock = dto.Stock,
+                CategoryId = dto.CategoryId
+            };
+
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = product.ProductId }, product);
         }
 
-        // PUT /api/products/{id}
+        // PUT /api/product/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Product product)
+        public async Task<IActionResult> Update(int id, [FromBody] CreateProductDto dto)
         {
             var existing = await _context.Products.FindAsync(id);
             if (existing == null) return NotFound();
 
-            existing.Name = product.Name;
-            existing.Description = product.Description;
-            existing.Price = product.Price;
-            existing.ImageUrl = product.ImageUrl;
-            existing.Stock = product.Stock;
-            existing.CategoryId = product.CategoryId;
+            existing.Name = dto.Name;
+            existing.Description = dto.Description;
+            existing.Price = dto.Price;
+            existing.ImageUrl = dto.ImageUrl;
+            existing.Stock = dto.Stock;
+            existing.CategoryId = dto.CategoryId;
 
             await _context.SaveChangesAsync();
             return Ok(existing);
         }
 
-        // DELETE /api/products/{id}
+        // DELETE /api/product/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

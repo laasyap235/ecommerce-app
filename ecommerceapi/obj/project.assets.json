@@ -3168,11 +3168,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Admin\\Desktop\\Learning\\ECOMMERCE\\ecommerce-app\\ecommerceapi\\ECommerceApi.csproj",
+      "projectUniqueName": "C:\\Users\\Admin\\source\\repos\\ecommerce-app\\ecommerceapi\\ECommerceApi.csproj",
       "projectName": "ECommerceApi",
-      "projectPath": "C:\\Users\\Admin\\Desktop\\Learning\\ECOMMERCE\\ecommerce-app\\ecommerceapi\\ECommerceApi.csproj",
+      "projectPath": "C:\\Users\\Admin\\source\\repos\\ecommerce-app\\ecommerceapi\\ECommerceApi.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Admin\\Desktop\\Learning\\ECOMMERCE\\ecommerce-app\\ecommerceapi\\obj\\",
+      "outputPath": "C:\\Users\\Admin\\source\\repos\\ecommerce-app\\ecommerceapi\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

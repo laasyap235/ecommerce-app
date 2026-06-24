@@ -19,9 +19,8 @@ const Navbar = ({
   logoText = 'ShopHub',
   navLinks = [
     { label: 'Home', path: '/' },
-    { label: 'Products', path: '/products' },
-    { label: 'Categories', path: '/categories' },
-    { label: 'Deals', path: '/deals' },
+    
+    
   ],
   cartCount = 0,
   isLoggedIn = false,
