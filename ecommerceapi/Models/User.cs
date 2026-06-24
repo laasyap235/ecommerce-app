@@ -4,7 +4,6 @@ namespace ECommerceApi.Models
 {
     public class User
     {
-
         public int Id { get; set; }
 
         [Required]
@@ -18,9 +17,11 @@ namespace ECommerceApi.Models
         [Phone]
         public string PhoneNumber { get; set; } = string.Empty;
 
-        public DateTime CreatedAt { get; set ; } = DateTime.UtcNow;
+        [Required]
+        public string Password { get; set; } = string.Empty;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public Cart? Cart { get; set; }
-
     }
 }

@@ -1,3 +1,20 @@
+# Visual Studio
 .vs/
+
+# User settings
+*.user
+*.csproj.user
+
+# Build folders
 bin/
 obj/
+
+# Logs
+*.log
+
+# Node modules (if frontend is inside same repo)
+node_modules/
+
+# Environment files
+.env
+.env.*
