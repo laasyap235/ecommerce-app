@@ -1,8 +1,8 @@
 ﻿using ECommerceApi.Data;
 using ECommerceApi.DTOs;
 using ECommerceApi.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using ECommerceApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -13,12 +13,13 @@ namespace ECommerceApi.Controllers
     [Route("api/auth")]
     public class AuthController : ControllerBase
     {
-        // TODO: rename "AppDbContext" to match your actual DbContext class name.
         private readonly AppDbContext _context;
+        private readonly ITokenService _tokenService;
 
-        public AuthController(AppDbContext context)
+        public AuthController(AppDbContext context, ITokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         [HttpPost("signup")]
@@ -38,6 +39,10 @@ namespace ECommerceApi.Controllers
                 Name = request.Name,
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber ?? string.Empty,
+                // NOTE: still storing/comparing plaintext passwords, same as the
+                // original controller. Swap this for a hash (e.g. BCrypt.Net-Next)
+                // before this goes anywhere near production - happy to wire that
+                // up too if you want it.
                 Password = request.Password,
                 CreatedAt = DateTime.UtcNow
             };
@@ -45,9 +50,13 @@ namespace ECommerceApi.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            await SignInUserAsync(user);
+            var token = _tokenService.GenerateToken(user);
 
-            return Ok(MapToDto(user));
+            return Ok(new AuthResponseDto
+            {
+                Token = token,
+                User = MapToDto(user)
+            });
         }
 
         [HttpPost("signin")]
@@ -62,32 +71,41 @@ namespace ECommerceApi.Controllers
             if (user is null || user.Password != request.Password)
                 return Unauthorized(new { message = "Invalid email or password." });
 
-            await SignInUserAsync(user);
+            var token = _tokenService.GenerateToken(user);
 
-            return Ok(MapToDto(user));
+            return Ok(new AuthResponseDto
+            {
+                Token = token,
+                User = MapToDto(user)
+            });
         }
 
+        // A JWT can't be revoked server-side without a blocklist/refresh-token
+        // store, so "signing out" really just means the client discards its
+        // token. This endpoint exists so the frontend has something consistent
+        // to call (and a hook point if you add token revocation later).
         [HttpPost("signout")]
-        public async Task<IActionResult> Signout()
+        [Authorize]
+        public IActionResult Signout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Ok(new { message = "Signed out successfully." });
         }
 
-        // Issues the auth cookie and attaches the basic identity claims.
-        private async Task SignInUserAsync(User user)
+        // Lets the frontend re-validate a stored token on app load/refresh and
+        // rehydrate the logged-in user without asking them to sign in again.
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> Me()
         {
-            var claims = new List<Claim>
-            {
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Name, user.Name),
-                new(ClaimTypes.Email, user.Email)
-            };
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId is null || !int.TryParse(userId, out var id))
+                return Unauthorized();
 
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
+            var user = await _context.Users.FindAsync(id);
+            if (user is null)
+                return Unauthorized();
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            return Ok(MapToDto(user));
         }
 
         private static UserDto MapToDto(User user) => new()
