@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 const SignInPage = () => {
   const navigate = useNavigate();
+  const { signin } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -30,14 +31,14 @@ const SignInPage = () => {
     setLoading(true);
 
     try {
-      const res = await loginUser({
+      // signin() hits /auth/signin, stores the returned JWT in localStorage,
+      // and updates the shared auth state (so Navbar etc. pick it up).
+      const user = await signin({
         email: formData.email,
         password: formData.password,
       });
 
-      // Auth is cookie-based, so there's no token to store -
-      // the browser holds the session cookie automatically.
-      console.log("Signed in as", res.data);
+      console.log("Signed in as", user);
       navigate("/");
     } catch (err) {
       console.log(err);

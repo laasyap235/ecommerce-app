@@ -1,9 +1,29 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://localhost:7042/api",  // ← http not https
-  withCredentials: true,
+  baseURL: "https://localhost:7042/api",
 });
+
+// Attach the JWT (if we have one) to every outgoing request.
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// If the token is missing/expired, the API returns 401 — clear it locally
+// so the app doesn't keep thinking the user is signed in.
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Products
 export const getProducts = () => api.get("/product");
@@ -19,8 +39,9 @@ export const createCategory = (data) => api.post("/category", data);
 
 // Auth
 export const signupUser = (data) => api.post("/auth/signup", data);
-export const loginUser = (data) => api.post("/auth/signin", data);  // ← signin not login
+export const loginUser = (data) => api.post("/auth/signin", data);
 export const logoutUser = () => api.post("/auth/signout");
+export const getCurrentUser = () => api.get("/auth/me");
 
 // Cart
 export const getCart = () => api.get("/cart");
@@ -28,3 +49,5 @@ export const addToCart = (data) => api.post("/cart", data);
 export const updateCartItem = (itemId, data) => api.put(`/cart/${itemId}`, data);
 export const removeCartItem = (itemId) => api.delete(`/cart/${itemId}`);
 export const clearCart = () => api.delete("/cart");
+
+export default api;

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Menu, X, User, ChevronDown, LogOut, Package } from 'lucide-react';
+import { ShoppingCart, User, ChevronDown, LogOut, Package } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = ({
   logoText = 'ShopHub',
@@ -8,14 +9,10 @@ const Navbar = ({
     { label: 'Home', path: '/' },
   ],
   cartCount = 0,
-  isLoggedIn = false,
-  userName = '',
-  onSignInClick,
-  onSignOutClick,
   onCartClick,
-  onSearch,
 }) => {
   const navigate = useNavigate();
+  const { isLoggedIn, user, signout } = useAuth();
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef(null);
 
@@ -33,6 +30,12 @@ const Navbar = ({
     `font-medium transition duration-200 ${
       isActive ? 'text-teal-600' : 'text-gray-700 hover:text-teal-600'
     }`;
+
+  const handleSignOut = async () => {
+    setAccountOpen(false);
+    await signout();
+    navigate('/');
+  };
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -68,7 +71,7 @@ const Navbar = ({
                     className="flex items-center gap-1 px-3 py-2 text-gray-700 hover:text-teal-600 font-medium transition duration-200"
                   >
                     <User size={20} />
-                    <span className="hidden sm:inline">{userName || 'Account'}</span>
+                    <span className="hidden sm:inline">{user?.name || 'Account'}</span>
                     <ChevronDown size={16} />
                   </button>
                   {accountOpen && (
@@ -84,10 +87,7 @@ const Navbar = ({
                         My Orders
                       </button>
                       <button
-                        onClick={() => {
-                          setAccountOpen(false);
-                          onSignOutClick && onSignOutClick();
-                        }}
+                        onClick={handleSignOut}
                         className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                       >
                         <LogOut size={16} />
@@ -98,7 +98,7 @@ const Navbar = ({
                 </>
               ) : (
                 <button
-                  onClick={() => onSignInClick ? onSignInClick() : navigate('/signin')}
+                  onClick={() => navigate('/signin')}
                   className="px-4 py-2 text-gray-700 hover:text-teal-600 font-medium transition duration-200"
                 >
                   Sign In
