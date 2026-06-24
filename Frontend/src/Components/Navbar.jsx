@@ -19,8 +19,9 @@ const Navbar = ({
   logoText = 'ShopHub',
   navLinks = [
     { label: 'Home', path: '/' },
-    
-    
+    { label: 'Products', path: '/products' },
+    { label: 'Categories', path: '/categories' },
+    { label: 'Deals', path: '/deals' },
   ],
   cartCount = 0,
   isLoggedIn = false,
@@ -33,6 +34,10 @@ const Navbar = ({
   const navigate = useNavigate();
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef(null);
+
+  function onSignInClick(){
+    navigate("/signIn");
+  }
 
   // Close the account dropdown when clicking outside it
   useEffect(() => {
@@ -50,6 +55,8 @@ const Navbar = ({
     `font-medium transition duration-200 ${
       isActive ? 'text-teal-600' : 'text-gray-700 hover:text-teal-600'
     }`;
+
+  
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
