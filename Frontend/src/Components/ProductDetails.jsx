@@ -1,11 +1,20 @@
 import { ArrowLeft, Heart, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { addToCart } from "../services/cartService";
 
-const ProductDetails = ({ product }) => {
+const ProductDetails = ({ product, onAddToCart }) => {
   const navigate = useNavigate();
-
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const handleAddToCart = async () => {
+        try {
+            await addToCart({ productId: product.productId, quantity: 1 });
+            alert("Added to cart!");
+        } catch (err) {
+            console.error(err);
+            alert("Failed to add to cart. Are you logged in?");
+        }
+        };
 
   return (
     <>
@@ -25,8 +34,7 @@ const ProductDetails = ({ product }) => {
             src={product.imageUrl}
             alt={product.name}
             onError={(e) => {
-              e.target.src =
-                "https://via.placeholder.com/600x600?text=Product";
+              e.target.src = "https://via.placeholder.com/600x600?text=Product";
             }}
             className="w-full h-full object-cover rounded-lg"
           />
@@ -48,21 +56,12 @@ const ProductDetails = ({ product }) => {
 
           <div className="mt-6 space-y-2">
             <p>
-              <span className="font-semibold">
-                Stock Available:
-              </span>
-              <span className="ml-2 text-gray-700">
-                {product.stock}
-              </span>
+              <span className="font-semibold">Stock Available:</span>
+              <span className="ml-2 text-gray-700">{product.stock}</span>
             </p>
-
             <p>
-              <span className="font-semibold">
-                Category:
-              </span>
-              <span className="ml-2 text-gray-700">
-                {product.category?.categoryName}
-              </span>
+              <span className="font-semibold">Category:</span>
+              <span className="ml-2 text-gray-700">{product.categoryName}</span>
             </p>
           </div>
 
@@ -70,6 +69,7 @@ const ProductDetails = ({ product }) => {
           <div className="flex gap-4 mt-8">
 
             <button
+              onClick={handleAddToCart}
               className="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition"
             >
               <ShoppingCart size={20} />
@@ -77,23 +77,14 @@ const ProductDetails = ({ product }) => {
             </button>
 
             <button
-              onClick={() =>
-                setIsWishlisted(!isWishlisted)
-              }
+              onClick={() => setIsWishlisted(!isWishlisted)}
               className={`px-5 py-3 rounded-lg border-2 transition ${
                 isWishlisted
                   ? "bg-red-50 border-red-300 text-red-500"
                   : "border-gray-300 text-gray-600 hover:border-red-300"
               }`}
             >
-              <Heart
-                size={22}
-                fill={
-                  isWishlisted
-                    ? "currentColor"
-                    : "none"
-                }
-              />
+              <Heart size={22} fill={isWishlisted ? "currentColor" : "none"} />
             </button>
 
           </div>

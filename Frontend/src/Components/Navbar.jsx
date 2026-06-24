@@ -2,26 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Menu, X, User, ChevronDown, LogOut, Package } from 'lucide-react';
 
-/**
- * Reusable Navbar for the ShopHub ecommerce theme.
- *
- * Usage:
- *   <Navbar
- *     cartCount={cartItems.length}
- *     isLoggedIn={!!user}
- *     userName={user?.name}
- *     onSignInClick={() => navigate('/login')}
- *     onSignOutClick={handleLogout}
- *     onSearch={(query) => navigate(`/search?q=${query}`)}
- *   />
- */
 const Navbar = ({
   logoText = 'ShopHub',
   navLinks = [
     { label: 'Home', path: '/' },
-    { label: 'Products', path: '/products' },
-    { label: 'Categories', path: '/categories' },
-    { label: 'Deals', path: '/deals' },
   ],
   cartCount = 0,
   isLoggedIn = false,
@@ -35,11 +19,6 @@ const Navbar = ({
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef(null);
 
-  function onSignInClick(){
-    navigate("/signIn");
-  }
-
-  // Close the account dropdown when clicking outside it
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (accountRef.current && !accountRef.current.contains(e.target)) {
@@ -50,18 +29,16 @@ const Navbar = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-
   const linkClasses = ({ isActive }) =>
     `font-medium transition duration-200 ${
       isActive ? 'text-teal-600' : 'text-gray-700 hover:text-teal-600'
     }`;
 
-  
-
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between gap-4">
+
           {/* Logo */}
           <button
             onClick={() => navigate('/')}
@@ -81,6 +58,7 @@ const Navbar = ({
 
           {/* Right side actions */}
           <div className="flex items-center gap-2 shrink-0">
+
             {/* Account */}
             <div className="relative" ref={accountRef}>
               {isLoggedIn ? (
@@ -120,7 +98,7 @@ const Navbar = ({
                 </>
               ) : (
                 <button
-                  onClick={onSignInClick}
+                  onClick={() => onSignInClick ? onSignInClick() : navigate('/signin')}
                   className="px-4 py-2 text-gray-700 hover:text-teal-600 font-medium transition duration-200"
                 >
                   Sign In
@@ -128,9 +106,9 @@ const Navbar = ({
               )}
             </div>
 
-            {/* Cart */}
+            {/* Cart — navigates to /cart by default */}
             <button
-              onClick={onCartClick}
+              onClick={() => onCartClick ? onCartClick() : navigate('/cart')}
               className="relative p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
             >
               <ShoppingCart size={24} />
@@ -140,6 +118,7 @@ const Navbar = ({
                 </span>
               )}
             </button>
+
           </div>
         </div>
       </div>
