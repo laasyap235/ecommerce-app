@@ -7,15 +7,12 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // On first load, if we have a stored token, ask the API whether it's
-  // still valid so a page refresh doesn't silently log the user out.
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       setLoading(false);
       return;
     }
-
     getCurrentUser()
       .then((res) => setUser(res.data))
       .catch(() => {

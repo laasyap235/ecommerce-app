@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { ShoppingCart, User, ChevronDown, LogOut, Package } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../utils/Authcontext';
 
 const Navbar = ({
   logoText = 'ShopHub',
@@ -12,7 +12,7 @@ const Navbar = ({
   onCartClick,
 }) => {
   const navigate = useNavigate();
-  const { isLoggedIn, user, signout } = useAuth();
+  const { isLoggedIn, user, signout } = useAuth();  // ✅ useAuth instead of useContext
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef(null);
 
@@ -106,7 +106,7 @@ const Navbar = ({
               )}
             </div>
 
-            {/* Cart — navigates to /cart by default */}
+            {/* Cart */}
             <button
               onClick={() => onCartClick ? onCartClick() : navigate('/cart')}
               className="relative p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
