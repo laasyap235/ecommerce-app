@@ -1,19 +1,26 @@
 import { ShoppingCart, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { addToCart } from "../services/cartService";
+import { addToCart } from "../services/api";
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [adding, setAdding] = useState(false);
 
-  const handleAddToCart = (e) => {
-    e.stopPropagation();
-    addToCart(product);
-    alert("Added to cart!");
+  const handleAddToCart = async (e) => {
+      e.stopPropagation();
+      setAdding(true);
+      try {
+        await addToCart({ productId: product.productId, quantity: 1 });
+        alert("Added to cart!");
+      } catch (err) {
+        alert("Failed to add to cart. Are you signed in?");
+        console.log(err.response?.data);
+      } finally {
+        setAdding(false);
+      }
     };
-
   return (
     <div
       onClick={() => navigate(`/product/${product.productId}`)}
