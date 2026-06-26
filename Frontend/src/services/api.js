@@ -29,14 +29,22 @@ api.interceptors.response.use(
 );
 
 // Products
-export const getProducts = (page = 1, pageSize = 8) => 
-  api.get(`/product?page=${page}&pageSize=${pageSize}`);
+// Products
+export const getProducts = (page = 1, pageSize = 8, search = "") => {
+  let url = `/product?page=${page}&pageSize=${pageSize}`;
+  if (search) {
+    url += `&search=${encodeURIComponent(search)}`;
+  }
+  return api.get(url);
+};
 export const getProductById = (id) => api.get(`/product/${id}`);
 export const getProductsByCategory = (categoryId, page = 1, pageSize = 8) => 
   api.get(`/product/category/${categoryId}?page=${page}&pageSize=${pageSize}`);
 export const createProduct = (product) => api.post("/product", product);
 export const updateProduct = (id, product) => api.put(`/product/${id}`, product);
 export const deleteProduct = (id) => api.delete(`/product/${id}`);
+
+
 
 // Categories
 export const getCategories = () => api.get("/category");

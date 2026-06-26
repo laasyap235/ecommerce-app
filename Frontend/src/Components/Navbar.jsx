@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Heart, User, ChevronDown, LogOut, Package } from 'lucide-react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { ShoppingCart, Heart, User, ChevronDown, LogOut, Package, Search } from 'lucide-react';
 import { useAuth } from '../utils/Authcontext';
 import { useWishlist } from '../utils/WishlistContext';
+import { useSearch } from '../utils/SearchContext';
 
 const Navbar = ({
   logoText = 'ShopHub',
@@ -13,10 +14,15 @@ const Navbar = ({
   onCartClick,
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isLoggedIn, user, signout } = useAuth();
   const { wishlist } = useWishlist();
+  const { searchQuery, setSearchQuery } = useSearch();
+  const [inputValue, setInputValue] = useState(searchQuery);
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef(null);
+
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -27,6 +33,15 @@ const Navbar = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // debounce: only push to shared context 300ms after typing stops
+  useEffect(() => {
+  const timer = setTimeout(() => {
+    console.log("pushing to context:", inputValue); // 👈 add this
+    setSearchQuery(inputValue);
+  }, 300);
+  return () => clearTimeout(timer);
+}, [inputValue, setSearchQuery]);
 
   const linkClasses = ({ isActive }) =>
     `font-medium transition duration-200 ${
@@ -60,6 +75,23 @@ const Navbar = ({
               </NavLink>
             ))}
           </nav>
+
+          {/* Search — visible only on the home page */}
+          {isHomePage && (
+            <div className="hidden md:flex flex-1 max-w-md relative">
+              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+  type="text"
+  value={inputValue}
+  onChange={(e) => {
+    console.log("typing:", e.target.value); // 👈 add this
+    setInputValue(e.target.value);
+  }}
+  placeholder="Search products..."
+  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+/>
+            </div>
+          )}
 
           {/* Right side actions */}
           <div className="flex items-center gap-2 shrink-0">
@@ -108,7 +140,7 @@ const Navbar = ({
               )}
             </div>
 
-            {/* Wishlist — shown whether signed in or as a guest */}
+            {/* Wishlist */}
             <button
               onClick={() => navigate('/wishlist')}
               className="relative p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
