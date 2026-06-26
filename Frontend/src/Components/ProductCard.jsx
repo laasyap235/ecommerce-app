@@ -2,7 +2,7 @@ import { ShoppingCart, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-import { addToCart } from "../services/cartService";
+// import { addToCart } from "../services/cartService";
 import { useWishlist } from "../utils/WishlistContext";
 import { useToast } from "../utils/ToastContext"; 
 
@@ -12,22 +12,16 @@ import { addToCart } from "../services/api";
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const { isInWishlist, toggleWishlist } = useWishlist();
-  const { showToast } = useToast(); // 👈 add this
+  const { showToast } = useToast();
   const [adding, setAdding] = useState(false);
 
   const isWishlisted = isInWishlist(product.productId);
-
-  const handleAddToCart = (e) => {
-    e.stopPropagation();
-    addToCart(product);
-    alert("Added to cart!");
-  };
 
   const handleToggleWishlist = async (e) => {
   e.stopPropagation();
   try {
     const message = await toggleWishlist(product);
-    console.log("toggleWishlist returned:", message); // 👈 add this
+    console.log("toggleWishlist returned:", message);
     if (message) {
       showToast({
         message,
