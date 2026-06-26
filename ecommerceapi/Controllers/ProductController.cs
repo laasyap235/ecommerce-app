@@ -17,12 +17,15 @@ namespace ECommerceApi.Controllers
             _context = context;
         }
 
-        // GET /api/product
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 8)
         {
-            var products = await _context.Products
-                .Include(p => p.Category)
+            var query = _context.Products.Include(p => p.Category);
+            var totalCount = await query.CountAsync();
+
+            var products = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(p => new ProductDto
                 {
                     ProductId = p.ProductId,
@@ -36,10 +39,9 @@ namespace ECommerceApi.Controllers
                 })
                 .ToListAsync();
 
-            return Ok(products);
+            return Ok(new { items = products, totalCount });
         }
 
-        // GET /api/product/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -63,13 +65,18 @@ namespace ECommerceApi.Controllers
             return Ok(product);
         }
 
-        // GET /api/product/category/{categoryId}
         [HttpGet("category/{categoryId}")]
-        public async Task<IActionResult> GetByCategory(int categoryId)
+        public async Task<IActionResult> GetByCategory(int categoryId, [FromQuery] int page = 1, [FromQuery] int pageSize = 8)
         {
-            var products = await _context.Products
+            var query = _context.Products
                 .Include(p => p.Category)
-                .Where(p => p.CategoryId == categoryId)
+                .Where(p => p.CategoryId == categoryId);
+
+            var totalCount = await query.CountAsync();
+
+            var products = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(p => new ProductDto
                 {
                     ProductId = p.ProductId,
@@ -83,10 +90,9 @@ namespace ECommerceApi.Controllers
                 })
                 .ToListAsync();
 
-            return Ok(products);
+            return Ok(new { items = products, totalCount });
         }
 
-        // POST /api/product
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateProductDto dto)
         {
@@ -105,7 +111,6 @@ namespace ECommerceApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = product.ProductId }, product);
         }
 
-        // PUT /api/product/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] CreateProductDto dto)
         {
@@ -123,7 +128,6 @@ namespace ECommerceApi.Controllers
             return Ok(existing);
         }
 
-        // DELETE /api/product/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

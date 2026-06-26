@@ -1,6 +1,6 @@
 ﻿using ECommerceApi.Models;
 using Microsoft.EntityFrameworkCore;
-using YourApp.Models;
+
 
 namespace ECommerceApi.Data
 {

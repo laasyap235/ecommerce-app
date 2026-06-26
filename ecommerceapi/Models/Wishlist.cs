@@ -1,7 +1,6 @@
-﻿using ECommerceApi.Models;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace YourApp.Models
+namespace ECommerceApi.Models
 {
     public class Wishlist
     {

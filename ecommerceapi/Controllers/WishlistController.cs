@@ -4,12 +4,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using ECommerceApi.Data;
-using ECommerceApi.DTOs;
 using ECommerceApi.Models;
-using YourApp.Models;
 
-namespace YourApp.Controllers
+
+namespace ECommerceApi.Controllers
 {
     [ApiController]
     [Route("api/wishlist")]
