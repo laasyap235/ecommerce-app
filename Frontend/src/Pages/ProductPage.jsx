@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { getProductById } from "../services/api";
 import ProductDetails from "../components/ProductDetails";
 
+
 const ProductPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);

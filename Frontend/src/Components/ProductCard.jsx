@@ -1,9 +1,13 @@
 import { ShoppingCart, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+
 import { addToCart } from "../services/cartService";
 import { useWishlist } from "../utils/WishlistContext";
 import { useToast } from "../utils/ToastContext"; 
+
+import { addToCart } from "../services/api";
+
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
@@ -35,6 +39,20 @@ const ProductCard = ({ product }) => {
     console.error("Wishlist toggle failed:", err);
   }
 };
+
+  const handleAddToCart = async (e) => {
+      e.stopPropagation();
+      setAdding(true);
+      try {
+        await addToCart({ productId: product.productId, quantity: 1 });
+        alert("Added to cart!");
+      } catch (err) {
+        alert("Failed to add to cart. Are you signed in?");
+        console.log(err.response?.data);
+      } finally {
+        setAdding(false);
+      }
+    };
 
   return (
     <div

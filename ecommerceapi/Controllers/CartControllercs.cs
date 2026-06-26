@@ -1,12 +1,14 @@
 ﻿using ECommerceApi.Data;
 using ECommerceApi.DTOs;
 using ECommerceApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace ECommerceApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/cart")]
     public class CartController : ControllerBase

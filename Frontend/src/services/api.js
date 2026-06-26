@@ -2,6 +2,9 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "https://localhost:7042/api",
+   headers: {
+    'Content-Type': 'application/json'
+  }
 });
 
 // Attach the JWT (if we have one) to every outgoing request.
@@ -47,7 +50,10 @@ export const getCurrentUser = () => api.get("/auth/me");
 export const getCart = () => api.get("/cart");
 export const addToCart = (data) => api.post("/cart", data);
 export const updateCartItem = (itemId, data) => api.put(`/cart/${itemId}`, data);
-export const removeCartItem = (itemId) => api.delete(`/cart/${itemId}`);
-export const clearCart = () => api.delete("/cart");
-
+export const removeCartItem = (itemId) => api.delete(`/cart/${itemId}`, {
+  headers: { 'Content-Type': 'application/json' }
+});
+export const clearCart = () => api.delete("/cart", {
+  headers: { 'Content-Type': 'application/json' }
+});
 export default api;
