@@ -1,5 +1,6 @@
 ﻿using ECommerceApi.Models;
 using Microsoft.EntityFrameworkCore;
+using YourApp.Models;
 
 namespace ECommerceApi.Data
 {
@@ -11,8 +12,10 @@ namespace ECommerceApi.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Cart> Carts { get; set; }
-
+        public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -136,6 +139,18 @@ namespace ECommerceApi.Data
                     CategoryId = 4
                 }
             );
+
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Wishlist>()
+                .HasIndex(w => new { w.UserId, w.ProductId })
+                .IsUnique();
+
+            modelBuilder.Entity<Wishlist>()
+                .HasOne(w => w.Product)
+                .WithMany()
+                .HasForeignKey(w => w.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
