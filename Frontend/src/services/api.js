@@ -29,9 +29,11 @@ api.interceptors.response.use(
 );
 
 // Products
-export const getProducts = () => api.get("/product");
+export const getProducts = (page = 1, pageSize = 8) => 
+  api.get(`/product?page=${page}&pageSize=${pageSize}`);
 export const getProductById = (id) => api.get(`/product/${id}`);
-export const getProductsByCategory = (categoryId) => api.get(`/product/category/${categoryId}`);
+export const getProductsByCategory = (categoryId, page = 1, pageSize = 8) => 
+  api.get(`/product/category/${categoryId}?page=${page}&pageSize=${pageSize}`);
 export const createProduct = (product) => api.post("/product", product);
 export const updateProduct = (id, product) => api.put(`/product/${id}`, product);
 export const deleteProduct = (id) => api.delete(`/product/${id}`);
