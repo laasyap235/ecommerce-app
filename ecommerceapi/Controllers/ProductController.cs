@@ -18,9 +18,22 @@ namespace ECommerceApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 8)
+        public async Task<IActionResult> GetAll(
+    [FromQuery] int page = 1,
+    [FromQuery] int pageSize = 8,
+    [FromQuery] string? search = null)
         {
-            var query = _context.Products.Include(p => p.Category);
+            var query = _context.Products.Include(p => p.Category).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim().ToLower();
+                query = query.Where(p =>
+                    p.Name.ToLower().Contains(term) ||
+                    (p.Category != null && p.Category.CategoryName.ToLower().Contains(term))
+                );
+            }
+
             var totalCount = await query.CountAsync();
 
             var products = await query
