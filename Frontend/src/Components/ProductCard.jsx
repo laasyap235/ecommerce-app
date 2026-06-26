@@ -2,24 +2,45 @@ import { ShoppingCart, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { addToCart } from "../services/cartService";
+import { useWishlist } from "../utils/WishlistContext";
+import { useToast } from "../utils/ToastContext"; 
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const { showToast } = useToast(); // 👈 add this
   const [adding, setAdding] = useState(false);
+
+  const isWishlisted = isInWishlist(product.productId);
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
     addToCart(product);
     alert("Added to cart!");
-    };
+  };
+
+  const handleToggleWishlist = async (e) => {
+  e.stopPropagation();
+  try {
+    const message = await toggleWishlist(product);
+    console.log("toggleWishlist returned:", message); // 👈 add this
+    if (message) {
+      showToast({
+        message,
+        actionLabel: "Go to wishlist",
+        actionPath: "/wishlist",
+      });
+    }
+  } catch (err) {
+    console.error("Wishlist toggle failed:", err);
+  }
+};
 
   return (
     <div
       onClick={() => navigate(`/product/${product.productId}`)}
       className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition cursor-pointer"
     >
-      {/* Product Image */}
       <div className="relative bg-gray-100 aspect-square flex items-center justify-center overflow-hidden">
         <img
           src={product.imageUrl}
@@ -30,12 +51,8 @@ const ProductCard = ({ product }) => {
           className="w-full h-full object-cover"
         />
 
-        {/* Wishlist Button */}
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsWishlisted(!isWishlisted);
-          }}
+          onClick={handleToggleWishlist}
           className="absolute top-3 right-3 bg-white p-2 rounded-full shadow-md hover:scale-110 transition"
         >
           <Heart
@@ -45,17 +62,14 @@ const ProductCard = ({ product }) => {
         </button>
       </div>
 
-      {/* Product Info */}
       <div className="p-4">
         <h3 className="font-semibold text-gray-900">{product.name}</h3>
-
         <p className="text-sm text-gray-500 mt-1">{product.categoryName}</p>
 
         <div className="flex justify-between items-center mt-4">
           <span className="font-bold text-xl">
             ${Number(product.price).toFixed(2)}
           </span>
-
           <button
             onClick={handleAddToCart}
             disabled={adding}

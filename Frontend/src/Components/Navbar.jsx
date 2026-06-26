@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User, ChevronDown, LogOut, Package } from 'lucide-react';
+import { ShoppingCart, Heart, User, ChevronDown, LogOut, Package } from 'lucide-react';
 import { useAuth } from '../utils/Authcontext';
+import { useWishlist } from '../utils/WishlistContext';
 
 const Navbar = ({
   logoText = 'ShopHub',
@@ -12,7 +13,8 @@ const Navbar = ({
   onCartClick,
 }) => {
   const navigate = useNavigate();
-  const { isLoggedIn, user, signout } = useAuth();  // ✅ useAuth instead of useContext
+  const { isLoggedIn, user, signout } = useAuth();
+  const { wishlist } = useWishlist();
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef(null);
 
@@ -105,6 +107,19 @@ const Navbar = ({
                 </button>
               )}
             </div>
+
+            {/* Wishlist — shown whether signed in or as a guest */}
+            <button
+              onClick={() => navigate('/wishlist')}
+              className="relative p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
+            >
+              <Heart size={24} />
+              {wishlist.length > 0 && (
+                <span className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {wishlist.length > 9 ? '9+' : wishlist.length}
+                </span>
+              )}
+            </button>
 
             {/* Cart */}
             <button
