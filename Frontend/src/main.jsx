@@ -7,19 +7,23 @@ import { AuthProvider } from './utils/Authcontext.jsx'
 import { WishlistProvider } from './utils/WishlistContext.jsx'
 import { ToastProvider } from './utils/ToastContext.jsx'
 import { SearchProvider } from './utils/SearchContext.jsx'
+import { MsalProvider } from '@azure/msal-react'
+import { msalInstance } from './utils/msalConfig.js'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <WishlistProvider>
-          <ToastProvider>
-            <SearchProvider>
-              <App />
-            </SearchProvider>
-          </ToastProvider>
-        </WishlistProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <MsalProvider instance={msalInstance}>
+      <BrowserRouter>
+        <AuthProvider>
+          <WishlistProvider>
+            <ToastProvider>
+              <SearchProvider>
+                <App />
+              </SearchProvider>
+            </ToastProvider>
+          </WishlistProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </MsalProvider>
   </StrictMode>
 )

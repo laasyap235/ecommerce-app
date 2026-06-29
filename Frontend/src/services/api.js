@@ -69,4 +69,15 @@ export const clearCart = () => api.delete("/cart", {
 export const checkout = () => api.post("/orders/checkout");
 export const getOrders = () => api.get("/orders");
 export const getOrder = (id) => api.get(`/orders/${id}`);
+export const uploadImage = (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return api.post('/upload/image', formData, {
+    headers: { 
+      'Content-Type': 'multipart/form-data',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
+export const microsoftLogin = (accessToken) => api.post("/auth/microsoft", { accessToken });
 export default api;

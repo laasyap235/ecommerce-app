@@ -1,16 +1,15 @@
-import { useState, useContext } from "react"; 
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../utils/Authcontext";  
+import { useAuth } from "../utils/Authcontext";
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from "../utils/msalConfig";
 
 const SignInPage = () => {
   const navigate = useNavigate();
-  const { signin } = useAuth();  
+  const { signin, microsoftSignin } = useAuth();
+  const { instance } = useMsal();
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,46 +28,40 @@ const SignInPage = () => {
     }
 
     setLoading(true);
-
     try {
-      const user = await signin({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      console.log("Signed in as", user);
+      await signin({ email: formData.email, password: formData.password });
       navigate("/");
     } catch (err) {
-      console.log(err);
-      const message =
-        err.response?.data?.message ||
-        "Invalid email or password. Please try again.";
+      const message = err.response?.data?.message || "Invalid email or password. Please try again.";
       setError(message);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleMicrosoftLogin = async () => {
+    try {
+      const result = await instance.loginPopup(loginRequest);
+      await microsoftSignin(result.accessToken);
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+      setError("Microsoft login failed. Please try again.");
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-6">
       <div className="w-full max-w-md">
-        <Link
-          to="/"
-          className="block text-center text-xl font-bold text-gray-900 mb-8"
-        >
+        <Link to="/" className="block text-center text-xl font-bold text-gray-900 mb-8">
           ShopHub
         </Link>
 
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 sm:p-10">
-          <h2 className="text-3xl font-bold text-gray-900 text-center">
-            Sign in
-          </h2>
+          <h2 className="text-3xl font-bold text-gray-900 text-center">Sign in</h2>
           <p className="text-gray-600 mt-2 mb-8 text-center">
             New here?{" "}
-            <Link
-              to="/signup"
-              className="text-gray-900 font-medium underline underline-offset-2"
-            >
+            <Link to="/signup" className="text-gray-900 font-medium underline underline-offset-2">
               Create an account
             </Link>
           </p>
@@ -81,10 +74,7 @@ const SignInPage = () => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1.5"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
                 Email
               </label>
               <input
@@ -101,16 +91,10 @@ const SignInPage = () => {
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                   Password
                 </label>
-                <Link
-                  to="/forgot-password"
-                  className="text-sm text-gray-500 hover:text-gray-900"
-                >
+                <Link to="/forgot-password" className="text-sm text-gray-500 hover:text-gray-900">
                   Forgot password?
                 </Link>
               </div>
@@ -153,6 +137,29 @@ const SignInPage = () => {
               {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="bg-white px-2 text-gray-400">or</span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleMicrosoftLogin}
+            className="w-full flex items-center justify-center gap-3 border border-gray-300 text-gray-700 font-medium rounded-lg py-2.5 hover:bg-gray-50 transition"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 21 21">
+              <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+              <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+              <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+              <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+            </svg>
+            Sign in with Microsoft
+          </button>
         </div>
 
         <p className="text-center text-sm text-gray-500 mt-6">

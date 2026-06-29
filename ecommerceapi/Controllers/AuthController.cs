@@ -79,6 +79,50 @@ namespace ECommerceApi.Controllers
                 User = MapToDto(user)
             });
         }
+        //microsoft auth login
+        [HttpPost("microsoft")]
+        public async Task<IActionResult> MicrosoftLogin([FromBody] MicrosoftLoginDto dto)
+        {
+            if (string.IsNullOrEmpty(dto.AccessToken))
+                return BadRequest(new { message = "Token is required." });
+
+            using var http = new HttpClient();
+            http.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", dto.AccessToken);
+
+            var response = await http.GetAsync("https://graph.microsoft.com/v1.0/me");
+            if (!response.IsSuccessStatusCode)
+                return Unauthorized(new { message = "Invalid Microsoft token." });
+
+            var json = await response.Content.ReadAsStringAsync();
+            var msUser = System.Text.Json.JsonDocument.Parse(json).RootElement;
+
+            var email = msUser.TryGetProperty("mail", out var mailProp) ? mailProp.GetString() : null;
+            email ??= msUser.TryGetProperty("userPrincipalName", out var upnProp) ? upnProp.GetString() : null;
+            var name = msUser.TryGetProperty("displayName", out var nameProp) ? nameProp.GetString() : email;
+
+            if (string.IsNullOrEmpty(email))
+                return BadRequest(new { message = "Could not get email from Microsoft." });
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+
+            if (user == null)
+            {
+                user = new User
+                {
+                    Name = name!,
+                    Email = email,
+                    PhoneNumber = string.Empty,
+                    Password = Guid.NewGuid().ToString(),
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+            }
+
+            var token = _tokenService.GenerateToken(user);
+            return Ok(new AuthResponseDto { Token = token, User = MapToDto(user) });
+        }
 
         // A JWT can't be revoked server-side without a blocklist/refresh-token
         // store, so "signing out" really just means the client discards its

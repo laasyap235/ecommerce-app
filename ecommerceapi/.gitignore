@@ -5,18 +5,20 @@
 *.user
 *.csproj.user
 
-# Build folders
+# Build output
 bin/
 obj/
 
 # Logs
 *.log
 
-# Node modules (if frontend is inside same repo)
+# Node modules (if applicable)
 node_modules/
 
 # Environment files
 .env
 .env.*
 
-*.csproj
+# Secret configuration
+appsettings.json
+appsettings.Development.json

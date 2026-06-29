@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser, signupUser, logoutUser, getCurrentUser } from '../services/api';
+import { loginUser, signupUser, logoutUser, getCurrentUser, microsoftLogin } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -45,9 +45,16 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const microsoftSignin = async (accessToken) => {
+    const res = await microsoftLogin(accessToken);
+    localStorage.setItem('token', res.data.token);
+    setUser(res.data.user);
+    return res.data.user;
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, isLoggedIn: !!user, loading, signin, signup, signout }}
+      value={{ user, isLoggedIn: !!user, loading, signin, signup, signout, microsoftSignin }}
     >
       {children}
     </AuthContext.Provider>
