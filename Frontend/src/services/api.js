@@ -66,4 +66,7 @@ export const removeCartItem = (itemId) => api.delete(`/cart/${itemId}`, {
 export const clearCart = () => api.delete("/cart", {
   headers: { 'Content-Type': 'application/json' }
 });
+export const checkout = () => api.post("/orders/checkout");
+export const getOrders = () => api.get("/orders");
+export const getOrder = (id) => api.get(`/orders/${id}`);
 export default api;

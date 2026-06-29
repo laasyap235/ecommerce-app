@@ -9,6 +9,7 @@ const Navbar = ({
   logoText = 'ShopHub',
   navLinks = [
     { label: 'Home', path: '/' },
+    {label: 'Orders', path: '/orders' },
   ],
   cartCount = 0,
   onCartClick,
@@ -37,7 +38,6 @@ const Navbar = ({
   // debounce: only push to shared context 300ms after typing stops
   useEffect(() => {
   const timer = setTimeout(() => {
-    console.log("pushing to context:", inputValue); // 👈 add this
     setSearchQuery(inputValue);
   }, 300);
   return () => clearTimeout(timer);
@@ -84,7 +84,6 @@ const Navbar = ({
   type="text"
   value={inputValue}
   onChange={(e) => {
-    console.log("typing:", e.target.value); // 👈 add this
     setInputValue(e.target.value);
   }}
   placeholder="Search products..."

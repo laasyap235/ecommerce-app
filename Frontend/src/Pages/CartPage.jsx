@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getCart, updateCartItem, removeCartItem, clearCart } from "../services/api";
+import { getCart, updateCartItem, removeCartItem, clearCart, checkout } from "../services/api";
 import Navbar from "../components/Navbar";
 import { ShoppingBag, Trash2, ArrowLeft } from "lucide-react";
 
@@ -9,6 +9,20 @@ const CartPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [checkingOut, setCheckingOut] = useState(false);
+
+
+const handleCheckout = async () => {
+      setCheckingOut(true);
+      try {
+        await checkout();
+        navigate("/orders");
+      } catch (err) {
+        setError("Checkout failed. Please try again.");
+      } finally {
+        setCheckingOut(false);
+      }
+    };
 
   useEffect(() => {
     getCart()
@@ -157,8 +171,12 @@ const CartPage = () => {
                     </div>
                   </div>
 
-                  <button className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-xl transition">
-                    Checkout
+                  <button
+                    onClick={handleCheckout}
+                    disabled={checkingOut}
+                    className="w-full bg-teal-600 hover:bg-teal-700 disabled:opacity-60 text-white font-semibold py-3 rounded-xl transition"
+                  >
+                    {checkingOut ? "Placing Order..." : "Checkout"}
                   </button>
 
                   <button
